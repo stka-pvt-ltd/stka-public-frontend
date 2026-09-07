@@ -15,15 +15,15 @@ export function PageIntro({
     <section
       className={`${
         dark ? "bg-primary text-primary-foreground" : "bg-background text-foreground"
-      } border-b border-border/70 pt-36 pb-20`}
+      } border-b border-border/70 pt-28 sm:pt-36 pb-14 sm:pb-20`}
     >
       <div className="container-wide">
         {align === "left" ? (
           <div className="max-w-3xl">
             <p className={dark ? "eyebrow text-pharma-soft" : "eyebrow"}>{eyebrow}</p>
-            <h1 className="display-title mt-5 text-4xl sm:text-5xl lg:text-6xl leading-tight">{title}</h1>
+            <h1 className="display-title mt-4 sm:mt-5 text-3xl sm:text-5xl lg:text-6xl leading-tight break-words">{title}</h1>
             <p
-              className={`mt-6 max-w-2xl text-base sm:text-lg leading-relaxed ${
+              className={`mt-4 sm:mt-6 max-w-2xl text-sm sm:text-lg leading-relaxed ${
                 dark ? "text-primary-foreground/75" : "text-muted-foreground"
               }`}
             >
@@ -31,13 +31,13 @@ export function PageIntro({
             </p>
           </div>
         ) : (
-          <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+          <div className="grid gap-6 sm:gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
             <div>
               <p className={dark ? "eyebrow text-pharma-soft" : "eyebrow"}>{eyebrow}</p>
-              <h1 className="display-title mt-5 max-w-4xl text-5xl sm:text-6xl lg:text-7xl">{title}</h1>
+              <h1 className="display-title mt-4 sm:mt-5 max-w-4xl text-3xl sm:text-6xl lg:text-7xl break-words">{title}</h1>
             </div>
             <p
-              className={`max-w-md text-base leading-relaxed ${
+              className={`max-w-md text-sm sm:text-base leading-relaxed ${
                 dark ? "text-primary-foreground/65" : "text-muted-foreground"
               }`}
             >

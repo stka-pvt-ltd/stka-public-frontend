@@ -144,9 +144,9 @@ export function EnquiryForm({ initialSubject, initialMessage }: EnquiryFormProps
   }
 
   return (
-    <form onSubmit={handleSubmit} className="grid gap-5" noValidate>
-      <div className="grid gap-5 sm:grid-cols-2">
-        <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.12em] text-primary">
+    <form onSubmit={handleSubmit} className="grid gap-4 sm:gap-5" noValidate>
+      <div className="grid gap-4 sm:gap-5 sm:grid-cols-2">
+        <label className="grid gap-1.5 sm:gap-2 text-xs font-bold uppercase tracking-[0.12em] text-primary">
           Name <span className="text-pharma">*</span>
           <input
             name="name"
@@ -155,11 +155,11 @@ export function EnquiryForm({ initialSubject, initialMessage }: EnquiryFormProps
             required
             disabled={submitMutation.isPending}
             placeholder="Your full name"
-            className="h-12 border border-input bg-card px-4 text-sm font-normal normal-case tracking-normal outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+            className="h-12 w-full max-w-full border border-input bg-card px-3.5 sm:px-4 text-sm font-normal normal-case tracking-normal outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
           />
         </label>
 
-        <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.12em] text-primary">
+        <label className="grid gap-1.5 sm:gap-2 text-xs font-bold uppercase tracking-[0.12em] text-primary">
           Email Address <span className="text-pharma">*</span>
           <input
             name="email"
@@ -169,13 +169,13 @@ export function EnquiryForm({ initialSubject, initialMessage }: EnquiryFormProps
             required
             disabled={submitMutation.isPending}
             placeholder="you@company.com"
-            className="h-12 border border-input bg-card px-4 text-sm font-normal normal-case tracking-normal outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+            className="h-12 w-full max-w-full border border-input bg-card px-3.5 sm:px-4 text-sm font-normal normal-case tracking-normal outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
           />
         </label>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.12em] text-primary">
+      <div className="grid gap-4 sm:gap-5 sm:grid-cols-2">
+        <label className="grid gap-1.5 sm:gap-2 text-xs font-bold uppercase tracking-[0.12em] text-primary">
           Phone Number <span className="text-pharma">*</span>
           <input
             name="phone"
@@ -185,11 +185,11 @@ export function EnquiryForm({ initialSubject, initialMessage }: EnquiryFormProps
             required
             disabled={submitMutation.isPending}
             placeholder="+91 9876543210"
-            className="h-12 border border-input bg-card px-4 text-sm font-normal normal-case tracking-normal outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+            className="h-12 w-full max-w-full border border-input bg-card px-3.5 sm:px-4 text-sm font-normal normal-case tracking-normal outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
           />
         </label>
 
-        <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.12em] text-primary">
+        <label className="grid gap-1.5 sm:gap-2 text-xs font-bold uppercase tracking-[0.12em] text-primary">
           Company Name
           <input
             name="company"
@@ -197,12 +197,12 @@ export function EnquiryForm({ initialSubject, initialMessage }: EnquiryFormProps
             onChange={handleChange}
             disabled={submitMutation.isPending}
             placeholder="Organization / Company"
-            className="h-12 border border-input bg-card px-4 text-sm font-normal normal-case tracking-normal outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+            className="h-12 w-full max-w-full border border-input bg-card px-3.5 sm:px-4 text-sm font-normal normal-case tracking-normal outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
           />
         </label>
       </div>
 
-      <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.12em] text-primary">
+      <label className="grid gap-1.5 sm:gap-2 text-xs font-bold uppercase tracking-[0.12em] text-primary">
         Subject
         <input
           name="subject"
@@ -210,11 +210,11 @@ export function EnquiryForm({ initialSubject, initialMessage }: EnquiryFormProps
           onChange={handleChange}
           disabled={submitMutation.isPending}
           placeholder="Enquiry subject"
-          className="h-12 border border-input bg-card px-4 text-sm font-normal normal-case tracking-normal outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+          className="h-12 w-full max-w-full border border-input bg-card px-3.5 sm:px-4 text-sm font-normal normal-case tracking-normal outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
         />
       </label>
 
-      <label className="grid gap-2 text-xs font-bold uppercase tracking-[0.12em] text-primary">
+      <label className="grid gap-1.5 sm:gap-2 text-xs font-bold uppercase tracking-[0.12em] text-primary">
         Message <span className="text-pharma">*</span>
         <textarea
           name="message"
@@ -224,21 +224,21 @@ export function EnquiryForm({ initialSubject, initialMessage }: EnquiryFormProps
           rows={5}
           disabled={submitMutation.isPending}
           placeholder="Please describe your inquiry, formulation requirement, or career application..."
-          className="resize-y border border-input bg-card p-4 text-sm font-normal normal-case tracking-normal outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+          className="w-full max-w-full resize-y border border-input bg-card p-3.5 sm:p-4 text-sm font-normal normal-case tracking-normal outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
         />
       </label>
 
       {/* PDF ATTACHMENT SELECTION FIELD */}
-      <div className="grid gap-2">
+      <div className="grid gap-1.5 sm:gap-2 max-w-full">
         <span className="text-xs font-bold uppercase tracking-[0.12em] text-primary">
           Attachment (Optional PDF / Resume)
         </span>
         
         {selectedFile ? (
-          <div className="flex items-center justify-between border border-pharma/40 bg-pharma-soft/20 p-3">
-            <div className="flex items-center gap-3 overflow-hidden">
+          <div className="flex items-center justify-between gap-2 border border-pharma/40 bg-pharma-soft/20 p-3 max-w-full overflow-hidden">
+            <div className="flex items-center gap-2.5 overflow-hidden min-w-0 flex-1">
               <FileText className="size-5 text-pharma shrink-0" />
-              <div className="truncate">
+              <div className="truncate min-w-0">
                 <p className="text-xs font-semibold text-primary truncate">{selectedFile.name}</p>
                 <p className="text-[0.68rem] text-muted-foreground">
                   {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
@@ -249,7 +249,7 @@ export function EnquiryForm({ initialSubject, initialMessage }: EnquiryFormProps
               type="button"
               onClick={handleRemoveFile}
               disabled={submitMutation.isPending}
-              className="p-1 text-muted-foreground transition-colors hover:text-destructive"
+              className="p-1 text-muted-foreground transition-colors hover:text-destructive shrink-0"
               title="Remove attached file"
               aria-label="Remove attached file"
             >
@@ -257,9 +257,9 @@ export function EnquiryForm({ initialSubject, initialMessage }: EnquiryFormProps
             </button>
           </div>
         ) : (
-          <label className="flex cursor-pointer items-center justify-center gap-2 border border-dashed border-input bg-card p-4 text-xs text-muted-foreground transition-colors hover:border-pharma hover:bg-secondary">
+          <label className="flex cursor-pointer items-center justify-center gap-2 border border-dashed border-input bg-card p-3.5 sm:p-4 text-center text-xs text-muted-foreground transition-colors hover:border-pharma hover:bg-secondary max-w-full">
             <Upload className="size-4 text-pharma shrink-0" />
-            <span>Attach PDF resume or document (Max 5 MB)</span>
+            <span className="break-words">Attach PDF resume or document (Max 5 MB)</span>
             <input
               ref={fileInputRef}
               type="file"
@@ -273,16 +273,16 @@ export function EnquiryForm({ initialSubject, initialMessage }: EnquiryFormProps
       </div>
 
       {validationError && (
-        <div role="alert" className="flex items-center gap-2 text-sm text-destructive">
+        <div role="alert" className="flex items-center gap-2 text-sm text-destructive break-words">
           <AlertCircle className="size-4 shrink-0" />
-          <span>{validationError}</span>
+          <span className="break-words min-w-0 flex-1">{validationError}</span>
         </div>
       )}
 
       {submitMutation.isError && (
-        <div role="alert" className="flex items-center gap-2 text-sm text-destructive">
+        <div role="alert" className="flex items-center gap-2 text-sm text-destructive break-words">
           <AlertCircle className="size-4 shrink-0" />
-          <span>
+          <span className="break-words min-w-0 flex-1">
             {submitMutation.error instanceof Error
               ? submitMutation.error.message
               : "Failed to submit enquiry. Please check your connection and try again."}
@@ -293,15 +293,15 @@ export function EnquiryForm({ initialSubject, initialMessage }: EnquiryFormProps
       <button
         type="submit"
         disabled={submitMutation.isPending}
-        className="inline-flex h-12 items-center justify-center gap-3 bg-primary px-5 text-xs font-bold uppercase tracking-[0.14em] text-primary-foreground transition-colors hover:bg-navy-soft disabled:opacity-50"
+        className="inline-flex h-12 w-full sm:w-auto items-center justify-center gap-3 bg-primary px-5 text-xs font-bold uppercase tracking-[0.14em] text-primary-foreground transition-colors hover:bg-navy-soft disabled:opacity-50"
       >
         {submitMutation.isPending ? (
           <>
-            <Loader2 className="size-4 animate-spin" /> Uploading / Sending...
+            <Loader2 className="size-4 animate-spin shrink-0" /> Uploading / Sending...
           </>
         ) : (
           <>
-            Submit Enquiry <ArrowRight className="size-4" />
+            Submit Enquiry <ArrowRight className="size-4 shrink-0" />
           </>
         )}
       </button>
