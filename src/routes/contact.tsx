@@ -105,23 +105,23 @@ function ContactPage() {
       />
 
       {/* 2. CONNECT WITH STKA SECTION */}
-      <section className="container-wide py-12 sm:py-16 lg:py-20 border-b border-border">
+      <section className="container-wide py-16 sm:py-20 border-b border-border">
         <div>
           <p className="eyebrow">Connect with STKA / 01</p>
-          <h2 className="display-title mt-3 sm:mt-4 text-2xl sm:text-3xl text-primary lg:text-4xl">
+          <h2 className="display-title mt-4 text-3xl text-primary sm:text-4xl">
             Structured communication channels.
           </h2>
-          <p className="mt-3 sm:mt-4 max-w-3xl text-xs sm:text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground">
             Visitors, healthcare distributors, and corporate partners can contact STKA Pvt Ltd for relevant commercial, product, and manufacturing conversations. Select the appropriate enquiry category when submitting your request.
           </p>
 
-          <div className="mt-8 sm:mt-10 grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {SUPPORTED_ENQUIRY_TYPES.map(({ icon: Icon, title, description }) => (
-              <div key={title} className="border border-border bg-card p-5 sm:p-6 shadow-sm">
-                <div className="grid size-10 place-items-center border border-pharma/40 bg-pharma-soft/30 text-pharma shrink-0">
+              <div key={title} className="border border-border bg-card p-6 shadow-sm">
+                <div className="grid size-10 place-items-center border border-pharma/40 bg-pharma-soft/30 text-pharma">
                   <Icon className="size-5" />
                 </div>
-                <h3 className="font-display text-lg sm:text-xl text-primary mt-4 break-words">{title}</h3>
+                <h3 className="font-display text-xl text-primary mt-4">{title}</h3>
                 <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{description}</p>
               </div>
             ))}
@@ -130,18 +130,18 @@ function ContactPage() {
       </section>
 
       {/* 3. CONTACT INFORMATION & LOCATION & ENQUIRY FORM GRID */}
-      <section className="container-wide grid gap-10 sm:gap-14 py-12 sm:py-20 lg:py-28 lg:grid-cols-[0.8fr_1.2fr]">
-        <div className="space-y-10 sm:space-y-12">
+      <section className="container-wide grid gap-14 py-20 sm:py-28 lg:grid-cols-[0.8fr_1.2fr]">
+        <div className="space-y-12">
           {/* CONTACT INFORMATION (USES BACKEND COMPANY INFORMATION DATA) */}
           <div>
             <p className="eyebrow">Contact Information / 02</p>
-            <h2 className="display-title mt-3 sm:mt-4 text-2xl sm:text-3xl text-primary">Corporate Details</h2>
+            <h2 className="display-title mt-4 text-3xl text-primary">Corporate Details</h2>
 
-            <div className="mt-6 sm:mt-8 border border-border bg-card p-4 sm:p-6 shadow-sm space-y-4 sm:space-y-5">
+            <div className="mt-8 border border-border bg-card p-6 shadow-sm space-y-5">
               <div>
                 <p className="text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">Company Name</p>
-                <p className="mt-1 text-sm font-bold text-primary break-words">{companyName}</p>
-                <p className="text-xs text-muted-foreground break-words">Legal Name: {legalName}</p>
+                <p className="mt-1 text-sm font-bold text-primary">{companyName}</p>
+                <p className="text-xs text-muted-foreground">Legal Name: {legalName}</p>
               </div>
 
               <div className="border-t border-border pt-4">
@@ -154,7 +154,7 @@ function ContactPage() {
               <div className="border-t border-border pt-4">
                 <p className="text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">Telephone Contact</p>
                 <p className="mt-1 inline-flex max-w-full items-center gap-2 text-sm font-semibold text-primary break-words">
-                  <Phone className="size-4 text-pharma shrink-0" /> <span className="break-words">{phone}</span>
+                  <Phone className="size-4 text-pharma shrink-0" /> <span>{phone}</span>
                 </p>
               </div>
 
@@ -162,14 +162,14 @@ function ContactPage() {
                 <p className="text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">Facility &amp; Postal Address</p>
                 <p className="mt-1 text-xs leading-relaxed text-foreground font-medium flex items-start gap-2 break-words">
                   <MapPin className="size-4 text-pharma shrink-0 mt-0.5" />
-                  <span className="break-words min-w-0 flex-1">{fullFormattedAddress}</span>
+                  <span className="break-words">{fullFormattedAddress}</span>
                 </p>
               </div>
 
               <div className="border-t border-border pt-4">
                 <p className="text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">Operating Schedule</p>
-                <p className="mt-1 inline-flex items-center gap-2 text-xs text-muted-foreground break-words">
-                  <Clock3 className="size-4 text-pharma shrink-0" /> <span className="break-words">Mon - Sat: 9:00 AM - 6:00 PM IST</span>
+                <p className="mt-1 inline-flex items-center gap-2 text-xs text-muted-foreground">
+                  <Clock3 className="size-4 text-pharma" /> Mon - Sat: 9:00 AM - 6:00 PM IST
                 </p>
               </div>
             </div>
@@ -178,21 +178,21 @@ function ContactPage() {
           {/* OUR LOCATION SECTION (INTERACTIVE MAP WITH BACKEND COORDINATES) */}
           <div>
             <p className="eyebrow">Our Location / 03</p>
-            <h2 className="display-title mt-3 sm:mt-4 text-2xl text-primary">Facility Map</h2>
-            <div className="mt-4 sm:mt-6">
+            <h2 className="display-title mt-4 text-2xl text-primary">Facility Map</h2>
+            <div className="mt-6">
               <CompanyMap companyInfo={rawCompany} />
             </div>
           </div>
         </div>
 
         {/* SEND AN ENQUIRY FORM */}
-        <div className="border border-border bg-secondary p-4 sm:p-8 lg:p-10 shadow-sm">
+        <div className="border border-border bg-secondary p-6 sm:p-10 shadow-sm">
           <p className="eyebrow">Send an enquiry / 04</p>
-          <h2 className="display-title mt-3 sm:mt-4 text-2xl sm:text-3xl text-primary">Tell us where to begin.</h2>
+          <h2 className="display-title mt-4 text-3xl text-primary">Tell us where to begin.</h2>
           <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
             Fill out the fields below. You can optionally attach a PDF document (e.g. resume or technical specification sheet up to 5 MB).
           </p>
-          <div className="mt-6 sm:mt-8">
+          <div className="mt-8">
             <EnquiryForm />
           </div>
         </div>

@@ -96,26 +96,26 @@ export function SiteFooter() {
         <div>
           <p className="eyebrow text-[#F5F7F5]/40">Contact</p>
           <div className="mt-5 grid gap-3 text-sm text-[#F5F7F5]/60">
-            <span className="font-semibold text-[#F5F7F5]/80">{legalName}</span>
+            <span className="font-semibold text-[#F5F7F5]/80 break-words">{legalName}</span>
             <a
               href={`mailto:${email}`}
-              className="inline-flex items-center gap-2 hover:text-[#C8DACD] transition-colors"
+              className="inline-flex max-w-full items-center gap-2 hover:text-[#C8DACD] transition-colors break-all"
             >
-              <Mail className="size-3.5 text-[#5F9472]" />
-              <span>{email}</span>
+              <Mail className="size-3.5 text-[#5F9472] shrink-0" />
+              <span className="break-all">{email}</span>
             </a>
             {phone && (
               <a
                 href={`tel:${phone.replace(/\s+/g, "")}`}
-                className="inline-flex items-center gap-2 text-[#F5F7F5]/80 hover:text-[#C8DACD] transition-colors"
+                className="inline-flex max-w-full items-center gap-2 text-[#F5F7F5]/80 hover:text-[#C8DACD] transition-colors break-words"
               >
-                <Phone className="size-3.5 text-[#5F9472]" />
+                <Phone className="size-3.5 text-[#5F9472] shrink-0" />
                 <span>{phone}</span>
               </a>
             )}
-            <span className="inline-flex items-start gap-2">
+            <span className="inline-flex max-w-full items-start gap-2 break-words">
               <MapPin className="size-3.5 shrink-0 text-[#5F9472] mt-0.5" />
-              <span>{fullAddress}</span>
+              <span className="break-words">{fullAddress}</span>
             </span>
           </div>
         </div>
