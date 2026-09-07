@@ -1,0 +1,156 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-navy: var(--navy);
+  --color-navy-soft: var(--navy-soft);
+  --color-pharma: var(--pharma);
+  --color-pharma-soft: var(--pharma-soft);
+  --color-steel: var(--steel);
+  /* New palette tokens */
+  --color-surface-soft: var(--surface-soft);
+  --color-surface-mid: var(--surface-mid);
+  --color-surface-green: var(--surface-green);
+  --color-accent-green: var(--accent-green);
+  --color-text-dark: var(--text-dark);
+  --font-display: "Space Grotesk", sans-serif;
+  --font-sans: "DM Sans", sans-serif;
+}
+
+:root {
+  --radius: 0.5rem;
+
+  /* ── Light pharma-green palette ── */
+  /* Backgrounds */
+  --background: #F5F7F5;
+  --card: #FFFFFF;
+  --popover: #FFFFFF;
+  --secondary: #E8ECE9;
+
+  /* Text */
+  --foreground: #29352F;
+  --card-foreground: #29352F;
+  --popover-foreground: #29352F;
+  --secondary-foreground: #29352F;
+  --muted-foreground: #5a6b62;
+
+  /* Primary — dark charcoal-green for headers, footer, CTA dark sections */
+  --primary: #29352F;
+  --primary-foreground: #F5F7F5;
+
+  /* Muted surfaces */
+  --muted: #E8ECE9;
+  --input: #DDE5DF;
+  --border: #DDE5DF;
+
+  /* Accent / pharma green */
+  --accent: #5F9472;
+  --accent-foreground: #FFFFFF;
+  --ring: #5F9472;
+
+  /* Legacy aliases (keep for backward-compat with existing components) */
+  --navy: #29352F;
+  --navy-soft: #3d4e46;
+  --pharma: #5F9472;
+  --pharma-soft: #C8DACD;
+  --steel: #8FB59D;
+
+  /* New semantic surface tokens */
+  --surface-soft: #F5F7F5;
+  --surface-mid: #E8ECE9;
+  --surface-green: #DDE5DF;
+  --accent-green: #5F9472;
+  --text-dark: #29352F;
+
+  /* Destructive */
+  --destructive: oklch(0.58 0.2 27);
+  --destructive-foreground: #FFFFFF;
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: var(--color-pharma-soft); color: var(--color-navy); }
+}
+
+@utility container-wide {
+  width: min(100% - 2rem, 80rem);
+  margin-inline: auto;
+}
+
+@utility eyebrow {
+  color: var(--color-pharma);
+  font-family: var(--font-sans);
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+@utility display-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 0.98;
+}
+
+@utility image-frame {
+  overflow: hidden;
+  position: relative;
+}
+
+@utility image-zoom {
+  transition: transform 700ms cubic-bezier(.22,.61,.36,1);
+  &:hover { transform: scale(1.045); }
+}
+
+@utility section-rule {
+  border-top: 1px solid color-mix(in oklab, var(--color-foreground) 14%, transparent);
+}
+
+@utility soft-grid {
+  background-image: linear-gradient(to right, color-mix(in oklab, var(--color-foreground) 7%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in oklab, var(--color-foreground) 7%, transparent) 1px, transparent 1px);
+  background-size: 4rem 4rem;
+}
+
+@utility reveal-up {
+  animation: reveal-up 700ms cubic-bezier(.22,.61,.36,1) both;
+}
+
+@keyframes reveal-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; scroll-behavior: auto !important; transition-duration: 1ms !important; }
+}

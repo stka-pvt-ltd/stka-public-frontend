@@ -1,0 +1,1 @@
+export { ManufacturingSection } from "./ManufacturingSection";
