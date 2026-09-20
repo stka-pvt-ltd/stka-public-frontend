@@ -6,6 +6,7 @@ export const Route = createFileRoute("/privacy-policy")({
   head: () => ({
     meta: [
       { title: "Privacy Policy | STKA Pvt Ltd" },
+      { name: "robots", content: "noindex, follow" },
       {
         name: "description",
         content:

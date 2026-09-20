@@ -14,6 +14,7 @@ import { useCertifications } from "@/hooks/use-public-api";
 import { PageIntro, SiteLayout } from "@/components/layout";
 import { PublicEmptyState, PublicErrorState } from "@/components/common";
 import laboratoryImage from "@/assets/stka-laboratory.jpg";
+import { buildBreadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/quality")({
   head: () => ({
@@ -75,8 +76,17 @@ function QualityPage() {
   const { data, isLoading, isError, refetch } = useCertifications({ pageSize: 50 });
   const certList = data?.content || [];
 
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Home", url: SITE_URL },
+    { name: "Quality & Certifications", url: `${SITE_URL}/quality` },
+  ]);
+
   return (
     <SiteLayout>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       {/* 1. PAGE INTRO WITH LEFT ALIGNED SUBHEADING LAYOUT */}
       <PageIntro
         dark

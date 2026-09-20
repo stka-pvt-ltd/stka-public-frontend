@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Package } from "lucide-react";
 import type { ProductResponse } from "@/types/api";
-import tabletsImage from "@/assets/stka-product-tablets.jpg";
+import { LOCAL_PRODUCT_IMAGES } from "@/data/products";
 
 export function ProductCard({
   product,
@@ -11,12 +11,16 @@ export function ProductCard({
   product: ProductResponse;
   align?: "left" | "right" | "full";
 }) {
-  const imageUrl =
-    product.productImages && product.productImages.length > 0
-      ? product.productImages[0]?.imageUrl || tabletsImage
-      : tabletsImage;
+  const localImage = product.slug ? LOCAL_PRODUCT_IMAGES[product.slug]?.[0] : null;
+  const initialUrl = product.productImages?.[0]?.imageUrl || localImage || null;
+  const [imgSrc, setImgSrc] = useState<string | null>(initialUrl);
+  const [hasError, setHasError] = useState(false);
 
-  const [imgSrc, setImgSrc] = useState<string>(imageUrl);
+  useEffect(() => {
+    const url = product.productImages?.[0]?.imageUrl || (product.slug ? LOCAL_PRODUCT_IMAGES[product.slug]?.[0] : null);
+    setImgSrc(url);
+    setHasError(false);
+  }, [product]);
 
   const alignClass =
     align === "left"
@@ -33,13 +37,25 @@ export function ProductCard({
         className="group grid sm:grid-cols-[0.9fr_1.1fr]"
       >
         <div className="image-frame relative aspect-[4/3] w-full border-b border-border bg-[#E8ECE9] p-2 sm:min-h-64 sm:border-b-0 sm:border-r overflow-hidden flex items-center justify-center">
-          <img
-            src={imgSrc}
-            alt={`${product.productName} product presentation`}
-            loading="lazy"
-            onError={() => setImgSrc(tabletsImage)}
-            className="h-full w-full border border-border/60 object-contain bg-white"
-          />
+          {imgSrc && !hasError ? (
+            <img
+              src={imgSrc}
+              alt={`${product.productName} product presentation`}
+              loading="lazy"
+              onError={() => {
+                if (localImage && imgSrc !== localImage) {
+                  setImgSrc(localImage);
+                } else {
+                  setHasError(true);
+                }
+              }}
+              className="h-full w-full border border-border/60 object-contain bg-white p-2"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center border border-border/60 bg-white">
+              <Package className="size-16 text-muted-foreground/30" />
+            </div>
+          )}
           {product.categoryName && (
             <div className="absolute left-4 top-4 bg-primary px-2.5 py-1 text-[0.6rem] font-bold uppercase tracking-[0.15em] text-primary-foreground z-10">
               {product.categoryName}

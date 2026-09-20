@@ -76,6 +76,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "STKA Pvt Ltd | Pharmaceutical Manufacturing" },
       { name: "description", content: "STKA Pvt Ltd is a quality-focused pharmaceutical manufacturing company built around reliable production and scientific standards." },
       { name: "author", content: "STKA Pvt Ltd" },
+      { name: "robots", content: "index, follow" },
       { property: "og:site_name", content: "STKA Pvt Ltd" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

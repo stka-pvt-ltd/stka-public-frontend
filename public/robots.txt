@@ -1,3 +1,7 @@
+# STKA Pvt Ltd — robots.txt
+# Public website: https://stkapvt.com
+
+# Allow all major crawlers to index public content
 User-agent: Googlebot
 Allow: /
 
@@ -13,5 +17,10 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://stkapvt.com/sitemap.xml
+# Disallow redirect-stub routes (they issue 301 redirects to canonical URLs;
+# noindex is also set on their canonical targets via meta robots).
+Disallow: /privacy
+Disallow: /terms
 
+# Reference the sitemap
+Sitemap: https://stkapvt.com/sitemap.xml

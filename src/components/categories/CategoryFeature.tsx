@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Layers } from "lucide-react";
 import type { CategoryResponse } from "@/types/api";
-import tabletsImage from "@/assets/stka-product-tablets.jpg";
+import { LOCAL_CATEGORY_IMAGES } from "@/data/categories";
 
 export function CategoryFeature({
   category,
@@ -14,7 +14,10 @@ export function CategoryFeature({
 }) {
   const name = category.categoryName;
   const description = category.description;
-  const imageUrl = category.categoryImage?.imageUrl || tabletsImage;
+  const imageUrl =
+    category.categoryImage?.imageUrl ||
+    (category.slug && LOCAL_CATEGORY_IMAGES[category.slug]) ||
+    null;
 
   const alignClass =
     align === "left"
@@ -32,15 +35,18 @@ export function CategoryFeature({
           large ? "min-h-[26rem] lg:min-h-[36rem]" : "min-h-[15rem]"
         }`}
       >
-        <img
-          src={imageUrl}
-          alt={`${name} pharmaceutical category`}
-          loading="lazy"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = tabletsImage;
-          }}
-          className="image-zoom absolute inset-0 h-full w-full object-cover"
-        />
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={`${name} pharmaceutical category`}
+            loading="lazy"
+            className="image-zoom absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-secondary/80">
+            <Layers className="size-16 text-muted-foreground/30" />
+          </div>
+        )}
         <div className="absolute inset-0 bg-primary/60 transition-colors group-hover:bg-primary/48" />
         <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
           <p className="eyebrow text-pharma-soft">Product category</p>
@@ -58,3 +64,36 @@ export function CategoryFeature({
     </div>
   );
 }
+
+export function CategoryFeatureSkeleton({
+  large = false,
+  align = "full",
+}: {
+  large?: boolean;
+  align?: "left" | "right" | "full";
+}) {
+  const alignClass =
+    align === "left"
+      ? "w-[94%] ml-0 mr-auto sm:w-full"
+      : align === "right"
+        ? "w-[94%] ml-auto mr-0 sm:w-full"
+        : "w-full";
+
+  return (
+    <div className={`border border-border/80 bg-[#E8ECE9] p-2 sm:p-3.5 ${alignClass}`}>
+      <div
+        className={`relative image-frame block border border-border/40 bg-muted/40 animate-pulse ${
+          large ? "min-h-[26rem] lg:min-h-[36rem]" : "min-h-[15rem]"
+        }`}
+      >
+        <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7 space-y-3">
+          <div className="h-3 w-24 bg-muted/60" />
+          <div className={`h-6 w-3/4 bg-muted/60 ${large ? "sm:h-8" : ""}`} />
+          <div className="h-4 w-full bg-muted/50 max-w-sm" />
+          <div className="h-3 w-28 bg-muted/50 mt-2" />
+        </div>
+      </div>
+    </div>
+  );
+}
+

@@ -13,6 +13,7 @@ import { useJobs } from "@/hooks/use-public-api";
 import { PageIntro, SiteLayout } from "@/components/layout";
 import { PublicEmptyState, PublicErrorState } from "@/components/common";
 import type { JobResponse } from "@/types/api";
+import { buildBreadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/careers")({
   head: () => ({
@@ -73,8 +74,17 @@ function CareersPage() {
   const { data: apiJobs, isLoading, isError, refetch } = useJobs();
   const activeJobs: JobResponse[] = apiJobs ? apiJobs.filter((j) => j.active) : [];
 
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Home", url: SITE_URL },
+    { name: "Careers", url: `${SITE_URL}/careers` },
+  ]);
+
   return (
     <SiteLayout>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       {/* 1. PAGE INTRO WITH LEFT ALIGNED SUBHEADING LAYOUT */}
       <PageIntro
         eyebrow="Careers"

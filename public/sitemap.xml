@@ -1,63 +1,169 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  STKA Pvt Ltd — Public Sitemap
+  Architecture: Static-First → Backend-Authoritative
+
+  Static product/category slugs are included as the currently known public URLs.
+  When the backend is available, this sitemap should be extended/replaced with
+  a server-generated sitemap driven by backend product and category data, so that
+  newly added products and categories are automatically indexed without manual edits.
+
+  Do NOT add admin, authentication, or private pages here.
+-->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- ── Core pages ─────────────────────────────────────────────────────── -->
+
   <url>
     <loc>https://stkapvt.com/</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-  <url>
-    <loc>https://stkapvt.com/products</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://stkapvt.com/categories</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
+
   <url>
     <loc>https://stkapvt.com/about</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-  <url>
-    <loc>https://stkapvt.com/quality</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
+
   <url>
     <loc>https://stkapvt.com/manufacturing</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+
+  <url>
+    <loc>https://stkapvt.com/quality</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://stkapvt.com/contact</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
   <url>
     <loc>https://stkapvt.com/careers</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
+
+  <!-- Privacy Policy and Terms are noindex — excluded from sitemap intentionally -->
+
+  <!-- ── Product catalogue index ────────────────────────────────────────── -->
+
   <url>
-    <loc>https://stkapvt.com/contact</loc>
-    <lastmod>2026-09-07</lastmod>
+    <loc>https://stkapvt.com/products</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- ── Individual product pages (current known slugs from backend) ─────
+       These slugs are sourced from the current STATIC_PRODUCTS fallback data,
+       which mirrors the authoritative backend product records.
+       Add new product slugs here when they are created in the backend,
+       or implement a server-side sitemap generator driven by the backend API.
+  ───────────────────────────────────────────────────────────────────────── -->
+
+  <url>
+    <loc>https://stkapvt.com/products/pantika-dsr</loc>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
+
   <url>
-    <loc>https://stkapvt.com/privacy-policy</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <loc>https://stkapvt.com/products/rabka-dsr</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
+
   <url>
-    <loc>https://stkapvt.com/terms-and-conditions</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <loc>https://stkapvt.com/products/pantika-iv</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
+
+  <url>
+    <loc>https://stkapvt.com/products/os-joint-tablets</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://stkapvt.com/products/bekazym-b-complex-l-lysine-syrup</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://stkapvt.com/products/sgest-300-sr-tablets</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://stkapvt.com/products/as-mega-softgel-capsules</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- ── Product categories index ───────────────────────────────────────── -->
+
+  <url>
+    <loc>https://stkapvt.com/categories</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- ── Individual category pages (current known slugs from backend) ─────
+       Same note as products above — these mirror the authoritative backend.
+       A server-generated sitemap would include newly added categories
+       automatically without requiring manual updates to this file.
+  ───────────────────────────────────────────────────────────────────────── -->
+
+  <url>
+    <loc>https://stkapvt.com/categories/gastrointestinal</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://stkapvt.com/categories/joint-bone-health</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://stkapvt.com/categories/womens-health</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://stkapvt.com/categories/multivitamins-supplements</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
 </urlset>

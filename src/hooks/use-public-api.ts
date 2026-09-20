@@ -77,7 +77,7 @@ export function useCertifications(params?: PaginationParams) {
 }
 
 export const DEFAULT_COMPANY_FALLBACK = {
-  companyName: "STKA Pharmaceutical",
+  companyName: "STKA PHARMACEUTICAL",
   legalName: "STKA PVT LTD.",
   description: "STKA Pvt Ltd is a pharmaceutical company focused on the development, manufacturing, and supply of quality pharmaceutical products",
   vision: "To become a trusted pharmaceutical company delivering quality, reliable, and accessible healthcare solutions.",

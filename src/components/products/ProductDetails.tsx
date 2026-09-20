@@ -11,10 +11,12 @@ import {
   Building2,
   Phone,
   User,
+  Package,
 } from "lucide-react";
-import { useSubmitEnquiry } from "@/hooks/use-public-api";
+import { useSubmitEnquiry, useCategories } from "@/hooks/use-public-api";
 import type { ProductResponse, ImageResponse } from "@/types/api";
-import tabletsImage from "@/assets/stka-product-tablets.jpg";
+import { STATIC_CATEGORIES } from "@/data/categories";
+import { LOCAL_PRODUCT_IMAGES } from "@/data/products";
 
 interface ProductDetailsProps {
   product: ProductResponse;
@@ -23,37 +25,58 @@ interface ProductDetailsProps {
 function ProductImageGallery({
   images,
   productName,
+  slug,
 }: {
   images: ImageResponse[];
   productName: string;
+  slug?: string;
 }) {
-  const imageUrls: string[] =
-    images && images.length > 0
-      ? images.map((img) => img.imageUrl).filter(Boolean)
-      : [tabletsImage];
+  const localImages = slug ? LOCAL_PRODUCT_IMAGES[slug] || [] : [];
+  const validBackendImages = images?.map((img) => img.imageUrl).filter(Boolean) || [];
+
+  // Deduplicate and filter valid image URLs (backend first, local fallback if empty)
+  const imageUrls: string[] = Array.from(
+    new Set(
+      validBackendImages.length > 0
+        ? validBackendImages
+        : localImages
+    )
+  );
 
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
-  const [activeSrc, setActiveSrc] = useState<string>(imageUrls[0] || tabletsImage);
+  const [activeSrc, setActiveSrc] = useState<string | null>(imageUrls[0] || null);
 
   // Sync active src if selectedIndex or images change
   useEffect(() => {
-    const current = imageUrls[selectedIndex] || imageUrls[0] || tabletsImage;
-    setActiveSrc(current);
-  }, [selectedIndex, images]);
+    const validIndex = selectedIndex < imageUrls.length ? selectedIndex : 0;
+    setActiveSrc(imageUrls[validIndex] || null);
+  }, [selectedIndex, images, imageUrls.length]);
 
   return (
     <div className="w-full border border-border bg-[#E8ECE9] p-3 sm:p-5">
       {/* Prominent Main Image Display with Stable Aspect Ratio Container */}
       <div className="image-frame relative aspect-[4/3] w-full border border-border/60 bg-white flex items-center justify-center overflow-hidden">
-        <img
-          src={activeSrc}
-          alt={`${productName} product presentation`}
-          onError={() => setActiveSrc(tabletsImage)}
-          className="h-full w-full object-contain p-3"
-        />
+        {activeSrc ? (
+          <img
+            src={activeSrc}
+            alt={`${productName} product presentation`}
+            className="h-full w-full object-contain p-3"
+            onError={() => {
+              const fallback = localImages[selectedIndex] || localImages[0];
+              if (fallback && activeSrc !== fallback) {
+                setActiveSrc(fallback);
+              }
+            }}
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center gap-2 p-6 text-center">
+            <Package className="size-16 text-muted-foreground/30" />
+            <span className="text-xs text-muted-foreground">Product presentation image</span>
+          </div>
+        )}
       </div>
 
-      {/* Thumbnail Selector Bar for Multiple Images */}
+      {/* Thumbnail Selector Bar for Multiple Backend Images */}
       {imageUrls.length > 1 && (
         <div className="mt-4 flex flex-wrap gap-2.5">
           {imageUrls.map((url, idx) => (
@@ -71,9 +94,6 @@ function ProductImageGallery({
               <img
                 src={url}
                 alt={`${productName} thumbnail ${idx + 1}`}
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = tabletsImage;
-                }}
                 className="h-full w-full object-contain"
               />
             </button>
@@ -124,6 +144,14 @@ export function ProductDetails({ product }: ProductDetailsProps) {
   const strength = product.strength || "Standard Formulation";
   const dosageForm = product.dosageForm || "Pharmaceutical Form";
   const category = product.categoryName || "Pharmaceuticals";
+  const { data: categoriesData, isSuccess: isCategoriesSuccess } = useCategories({ pageSize: 100 });
+  const categoriesList = isCategoriesSuccess && categoriesData?.content?.length ? categoriesData.content : STATIC_CATEGORIES;
+  const categoryRecord = categoriesList.find(
+    (c) =>
+      c.id === product.categoryId ||
+      c.categoryName.toLowerCase() === (product.categoryName || "").toLowerCase()
+  );
+  const categorySlug = categoryRecord?.slug;
   const description =
     product.description ||
     "High-grade pharmaceutical formulation produced under rigorous batch quality controls and scientific standards.";
@@ -140,11 +168,38 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             <ChevronRight className="size-3.5" />
             <Link to="/products" className="hover:text-primary-foreground transition-colors">Products</Link>
             <ChevronRight className="size-3.5" />
+            {categorySlug ? (
+              <>
+                <Link
+                  to="/categories/$slug"
+                  params={{ slug: categorySlug }}
+                  className="hover:text-primary-foreground transition-colors truncate max-w-xs"
+                >
+                  {category}
+                </Link>
+                <ChevronRight className="size-3.5" />
+              </>
+            ) : (
+              <>
+                <span className="truncate max-w-xs">{category}</span>
+                <ChevronRight className="size-3.5" />
+              </>
+            )}
             <span className="text-primary-foreground font-semibold truncate max-w-xs">{name}</span>
           </nav>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <span className="eyebrow text-pharma-soft">{category}</span>
+            {categorySlug ? (
+              <Link
+                to="/categories/$slug"
+                params={{ slug: categorySlug }}
+                className="eyebrow text-pharma-soft hover:underline"
+              >
+                {category}
+              </Link>
+            ) : (
+              <span className="eyebrow text-pharma-soft">{category}</span>
+            )}
             <span className="h-3 w-px bg-primary-foreground/20" />
             <span className="text-xs font-bold uppercase tracking-[0.14em] text-primary-foreground/70">{brand}</span>
           </div>
@@ -160,7 +215,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
       <section className="container-wide grid gap-12 py-16 lg:grid-cols-[0.95fr_1.05fr] lg:items-start lg:py-24">
         {/* LEFT COLUMN: GALLERY & QUALITY NOTES */}
         <div>
-          <ProductImageGallery images={images} productName={name} />
+          <ProductImageGallery images={images} productName={name} slug={product.slug} />
 
           <div className="mt-6 border border-border bg-[#F5F7F5] p-5">
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-primary">

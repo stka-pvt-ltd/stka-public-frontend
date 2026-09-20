@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Layers, ShieldCheck, FileCheck, Search } from "lucide-react";
+import { ArrowRight, Layers, ShieldCheck, FileCheck, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCategories } from "@/hooks/use-public-api";
+import { STATIC_CATEGORIES } from "@/data/categories";
 import { PageIntro, SiteLayout } from "@/components/layout";
 import { CategoryFeature } from "@/components/categories/CategoryFeature";
-import { PublicEmptyState, PublicErrorState } from "@/components/common";
+import { PublicEmptyState } from "@/components/common";
 
 export const Route = createFileRoute("/categories/")({
   head: () => ({
@@ -43,6 +45,12 @@ export const Route = createFileRoute("/categories/")({
             name: "STKA Pvt Ltd",
             url: "https://stkapvt.com",
           },
+          hasPart: STATIC_CATEGORIES.map((cat) => ({
+            "@type": "WebPage",
+            name: cat.categoryName,
+            description: cat.description,
+            url: `https://stkapvt.com/categories/${cat.slug}`,
+          })),
         }),
       },
     ],
@@ -51,8 +59,33 @@ export const Route = createFileRoute("/categories/")({
 });
 
 function CategoriesListingPage() {
-  const { data, isLoading, isError, refetch } = useCategories({ pageSize: 50 });
-  const categories = data?.content || [];
+  const [pageNumber, setPageNumber] = useState(0);
+  const pageSize = 6;
+
+  const { data, isSuccess } = useCategories({
+    pageNumber,
+    pageSize,
+  });
+
+  // BEFORE BACKEND SUCCESS: static fallback is active
+  // AFTER BACKEND SUCCESS: backend data completely replaces static fallback
+  const isBackendActive = isSuccess && Boolean(data);
+
+  const displayedCategories = isBackendActive
+    ? (data?.content || [])
+    : STATIC_CATEGORIES.slice(pageNumber * pageSize, (pageNumber + 1) * pageSize);
+
+  const totalElements = isBackendActive
+    ? (data?.totalElement ?? displayedCategories.length)
+    : STATIC_CATEGORIES.length;
+
+  const totalPages = isBackendActive
+    ? (data?.totalPage || 1)
+    : Math.max(1, Math.ceil(STATIC_CATEGORIES.length / pageSize));
+
+  const isLastPage = isBackendActive
+    ? (data?.lastPage || pageNumber >= totalPages - 1)
+    : pageNumber >= totalPages - 1;
 
   return (
     <SiteLayout>
@@ -119,30 +152,12 @@ function CategoriesListingPage() {
             <h3 className="font-display text-xl text-primary mt-1">Available Product Categories</h3>
           </div>
           <span className="text-xs font-semibold text-muted-foreground bg-secondary px-3 py-1.5 border border-border">
-            {isError
-              ? "Temporarily Unavailable"
-              : `${categories.length} ${categories.length === 1 ? "Category" : "Categories"} Listed`}
+            {`${totalElements} ${totalElements === 1 ? "Category" : "Categories"} Listed`}
           </span>
         </div>
 
-        {isLoading ? (
-          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 3 }).map((_, idx) => (
-              <div key={idx} className="animate-pulse border border-border bg-[#E8ECE9] p-4 min-h-[16rem]">
-                <div className="h-6 w-1/2 bg-muted" />
-                <div className="mt-4 h-12 w-full bg-muted/60" />
-              </div>
-            ))}
-          </div>
-        ) : isError ? (
-          <div className="mt-12">
-            <PublicErrorState
-              title="Categories are temporarily unavailable"
-              description="We're unable to load product categories right now. Please try again shortly."
-              onRetry={() => refetch()}
-            />
-          </div>
-        ) : categories.length === 0 ? (
+        {/* CATEGORIES CONTENT: Static renders immediately, replaced by backend data upon success */}
+        {displayedCategories.length === 0 ? (
           <div className="mt-12">
             <PublicEmptyState
               icon={Layers}
@@ -156,9 +171,32 @@ function CategoriesListingPage() {
           </div>
         ) : (
           <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {categories.map((cat, idx) => (
+            {displayedCategories.map((cat, idx) => (
               <CategoryFeature key={cat.id} category={cat} align={idx % 2 === 0 ? "left" : "right"} />
             ))}
+          </div>
+        )}
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="mt-10 flex items-center justify-between border-t border-border pt-6">
+            <button
+              onClick={() => setPageNumber((p) => Math.max(0, p - 1))}
+              disabled={pageNumber === 0}
+              className="inline-flex items-center gap-2 border border-input bg-card px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-primary disabled:opacity-40"
+            >
+              <ChevronLeft className="size-4" /> Previous
+            </button>
+            <span className="text-xs font-medium text-muted-foreground">
+              Page {pageNumber + 1} of {totalPages}
+            </span>
+            <button
+              onClick={() => setPageNumber((p) => Math.min(totalPages - 1, p + 1))}
+              disabled={isLastPage || pageNumber >= totalPages - 1}
+              className="inline-flex items-center gap-2 border border-input bg-card px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-primary disabled:opacity-40"
+            >
+              Next <ChevronRight className="size-4" />
+            </button>
           </div>
         )}
 

@@ -53,7 +53,7 @@ export function QualitySection() {
             <p className="text-[0.62rem] font-bold uppercase tracking-[0.17em] text-[#5F9472]">
               Certification library
             </p>
-            <p className="mt-1.5 max-w-[14rem] font-display text-lg text-[#29352F] sm:text-xl">Records will appear when connected.</p>
+            <p className="mt-1.5 max-w-[14rem] font-display text-lg text-[#29352F] sm:text-xl">WHO-GMP certified manufacturing facility</p>
           </div>
         </div>
       </div>

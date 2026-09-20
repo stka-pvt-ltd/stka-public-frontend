@@ -2,29 +2,35 @@ import { useState } from "react";
 import { ChevronDown, Search, RefreshCw, ChevronLeft, ChevronRight, Package, PackageSearch } from "lucide-react";
 import { useCategories, useProducts, useProductsByCategory, useProductSearch } from "@/hooks/use-public-api";
 import { useDebounce } from "@/hooks/use-debounce";
-import { ProductCard, ProductCardSkeleton } from "./ProductCard";
-import { PublicEmptyState, PublicErrorState } from "@/components/common";
+import { STATIC_PRODUCTS } from "@/data/products";
+import { STATIC_CATEGORIES } from "@/data/categories";
+import { ProductCard } from "./ProductCard";
+import { PublicEmptyState } from "@/components/common";
 import type { CategoryResponse, ProductResponse } from "@/types/api";
 
 export function ProductFilters() {
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<{ id: string; name: string } | null>(null);
   const [pageNumber, setPageNumber] = useState(0);
+  const pageSize = 12;
 
   // Search query debounced by 400ms to avoid requests on every keystroke
   const debouncedQuery = useDebounce(query, 400);
 
-  // Categories query
-  const { data: categoriesData, isLoading: isCategoriesLoading } = useCategories({ pageSize: 100 });
-  const apiCategories: CategoryResponse[] = categoriesData?.content || [];
+  // Categories query: static fallback initially, backend authoritative upon success
+  const { data: categoriesData, isSuccess: isCategoriesSuccess } = useCategories({ pageSize: 100 });
+  const apiCategories: CategoryResponse[] =
+    isCategoriesSuccess && categoriesData?.content && categoriesData.content.length > 0
+      ? categoriesData.content
+      : STATIC_CATEGORIES;
 
   // Determine active query mode: Search vs Category Filter vs All Products
   const isSearching = debouncedQuery.trim().length > 0;
   const isFilteringCategory = Boolean(selectedCategory && selectedCategory.id !== "ALL");
 
-  const searchResult = useProductSearch(debouncedQuery, { pageNumber, pageSize: 12 });
-  const categoryResult = useProductsByCategory(selectedCategory?.id || "", { pageNumber, pageSize: 12 });
-  const allProductsResult = useProducts({ pageNumber, pageSize: 12 });
+  const searchResult = useProductSearch(debouncedQuery, { pageNumber, pageSize });
+  const categoryResult = useProductsByCategory(selectedCategory?.id || "", { pageNumber, pageSize });
+  const allProductsResult = useProducts({ pageNumber, pageSize });
 
   // Select active query based on user filter input
   const activeQuery = isSearching
@@ -33,11 +39,47 @@ export function ProductFilters() {
       ? categoryResult
       : allProductsResult;
 
-  const { data, isLoading, isError, refetch } = activeQuery;
+  const { data, isSuccess, isError, refetch } = activeQuery;
 
-  const displayedProducts: ProductResponse[] = data?.content || [];
-  const totalPages = data?.totalPage || 1;
-  const totalElements = data?.totalElement || displayedProducts.length;
+  // 1. Static fallback calculation for immediate rendering & backend loading / error states
+  let staticFiltered = STATIC_PRODUCTS;
+  if (isSearching) {
+    const q = debouncedQuery.toLowerCase();
+    staticFiltered = staticFiltered.filter(
+      (p) =>
+        p.productName.toLowerCase().includes(q) ||
+        (p.genericName && p.genericName.toLowerCase().includes(q)) ||
+        (p.brand && p.brand.toLowerCase().includes(q)) ||
+        (p.composition && p.composition.toLowerCase().includes(q))
+    );
+  } else if (isFilteringCategory) {
+    staticFiltered = staticFiltered.filter(
+      (p) => p.categoryId === selectedCategory?.id
+    );
+  }
+
+  const staticTotalElements = staticFiltered.length;
+  const staticTotalPages = Math.max(1, Math.ceil(staticTotalElements / pageSize));
+  const staticDisplayed = staticFiltered.slice(pageNumber * pageSize, (pageNumber + 1) * pageSize);
+
+  // 2. Active products: Backend completely replaces static fallback once loaded
+  const isBackendActive = isSuccess && Boolean(data);
+
+  const displayedProducts: ProductResponse[] = isBackendActive
+    ? (data?.content || [])
+    : staticDisplayed;
+
+  const totalPages = isBackendActive
+    ? (data?.totalPage || 1)
+    : staticTotalPages;
+
+  const totalElements = isBackendActive
+    ? (data?.totalElement ?? displayedProducts.length)
+    : staticTotalElements;
+
+  const isLastPage = isBackendActive
+    ? (data?.lastPage || pageNumber >= totalPages - 1)
+    : pageNumber >= totalPages - 1;
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
@@ -83,8 +125,7 @@ export function ProductFilters() {
           <select
             value={selectedCategory?.id || "ALL"}
             onChange={handleCategoryChange}
-            disabled={isCategoriesLoading}
-            className="h-12 w-full appearance-none border border-input bg-card px-4 pr-10 text-sm outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+            className="h-12 w-full appearance-none border border-input bg-card px-4 pr-10 text-sm outline-none focus:ring-2 focus:ring-ring"
           >
             <option value="ALL">All categories</option>
             {apiCategories.map((cat) => (
@@ -99,14 +140,10 @@ export function ProductFilters() {
 
       {/* Result Meta & Status Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 py-5 text-xs text-muted-foreground">
-        {isError ? (
-          <p className="font-semibold text-foreground">Product catalogue temporarily unavailable</p>
-        ) : (
-          <p>
-            Showing <span className="font-semibold text-foreground">{displayedProducts.length}</span> of{" "}
-            <span className="font-semibold text-foreground">{totalElements}</span> pharmaceutical records.
-          </p>
-        )}
+        <p>
+          Showing <span className="font-semibold text-foreground">{displayedProducts.length}</span> of{" "}
+          <span className="font-semibold text-foreground">{totalElements}</span> pharmaceutical records.
+        </p>
 
         {isError && (
           <button
@@ -118,20 +155,8 @@ export function ProductFilters() {
         )}
       </div>
 
-      {/* Grid Content / Loading Skeletons */}
-      {isLoading ? (
-        <div className="grid gap-6 md:grid-cols-2">
-          {Array.from({ length: 4 }).map((_, idx) => (
-            <ProductCardSkeleton key={idx} align={idx % 2 === 0 ? "left" : "right"} />
-          ))}
-        </div>
-      ) : isError ? (
-        <PublicErrorState
-          title="Product catalogue temporarily unavailable"
-          description="We're unable to display our product catalogue right now. Please try again shortly."
-          onRetry={() => refetch()}
-        />
-      ) : displayedProducts.length > 0 ? (
+      {/* Grid Content: Fallback products render immediately, backend products replace upon success */}
+      {displayedProducts.length > 0 ? (
         <div className="grid gap-6 md:grid-cols-2">
           {displayedProducts.map((product, idx) => (
             <ProductCard
@@ -182,7 +207,7 @@ export function ProductFilters() {
           </span>
           <button
             onClick={() => setPageNumber((p) => Math.min(totalPages - 1, p + 1))}
-            disabled={data?.lastPage || pageNumber >= totalPages - 1}
+            disabled={isLastPage}
             className="inline-flex items-center gap-2 border border-input bg-card px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-primary disabled:opacity-40"
           >
             Next Page <ChevronRight className="size-4" />

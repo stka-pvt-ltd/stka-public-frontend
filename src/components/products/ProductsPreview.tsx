@@ -1,12 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Package } from "lucide-react";
 import { useProducts } from "@/hooks/use-public-api";
-import { ProductCard, ProductCardSkeleton } from "./ProductCard";
+import { STATIC_PRODUCTS } from "@/data/products";
+import { ProductCard } from "./ProductCard";
 import { PublicEmptyState } from "@/components/common";
 
 export function ProductsPreview() {
-  const { data, isLoading } = useProducts({ pageSize: 2 });
-  const products = data?.content || [];
+  const { data, isSuccess } = useProducts({ pageSize: 2 });
+  const products = isSuccess && data?.content ? data.content : STATIC_PRODUCTS.slice(0, 2);
 
   return (
     <section className="bg-background py-24 sm:py-32">
@@ -22,12 +23,7 @@ export function ProductsPreview() {
         </div>
 
         <div className="mt-12 grid gap-6 md:grid-cols-2">
-          {isLoading ? (
-            <>
-              <ProductCardSkeleton align="left" />
-              <ProductCardSkeleton align="right" />
-            </>
-          ) : products.length > 0 ? (
+          {products.length > 0 ? (
             products.map((product, idx) => (
               <ProductCard
                 key={product.id}

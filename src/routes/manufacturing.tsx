@@ -5,6 +5,7 @@ import manufacturingImage from "@/assets/stka-manufacturing.jpg";
 import laboratoryImage from "@/assets/stka-laboratory.jpg";
 import { PageIntro, SiteLayout } from "@/components/layout";
 import { PublicEmptyState, PublicErrorState } from "@/components/common";
+import { buildBreadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/manufacturing")({
   head: () => ({
@@ -43,8 +44,17 @@ function ManufacturingPage() {
       ? activeUnits[0].images[0]?.imageUrl || manufacturingImage
       : manufacturingImage;
 
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Home", url: SITE_URL },
+    { name: "Manufacturing", url: `${SITE_URL}/manufacturing` },
+  ]);
+
   return (
     <SiteLayout>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       {/* 1. PAGE INTRO WITH LEFT ALIGNED SUBHEADING LAYOUT */}
       <PageIntro
         eyebrow="Manufacturing"
