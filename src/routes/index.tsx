@@ -69,11 +69,6 @@ export const Route = createFileRoute("/")({
           "@type": "WebSite",
           name: "STKA Pvt Ltd",
           url: "https://stkapvt.com",
-          potentialAction: {
-            "@type": "SearchAction",
-            target: "https://stkapvt.com/products?search={search_term_string}",
-            "query-input": "required name=search_term_string",
-          },
         }),
       },
     ],
@@ -82,5 +77,16 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  return <SiteLayout><Hero /><WhoWeAre /><PortfolioSection /><ProductsPreview /><QualitySection /><ManufacturingSection /><WhyStka /><FinalCta /></SiteLayout>;
+  return (
+    <SiteLayout>
+      <Hero />
+      <WhoWeAre />
+      <PortfolioSection />
+      <ProductsPreview />
+      <QualitySection />
+      <ManufacturingSection />
+      <WhyStka />
+      <FinalCta />
+    </SiteLayout>
+  );
 }

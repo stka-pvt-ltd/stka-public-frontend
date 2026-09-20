@@ -7,23 +7,37 @@ import { STATIC_CATEGORIES } from "@/data/categories";
 import { SiteLayout } from "@/components/layout";
 import { ProductDetails } from "@/components/products";
 import { updateDocumentMetadata } from "@/lib/seo";
+import { resolveProductBySlug } from "@/services/catalog-resolver";
+import { SITE_URL } from "@/lib/config";
 
 export const Route = createFileRoute("/products/$slug")({
-  head: ({ params }) => {
-    const staticProduct = getProductBySlug(params.slug);
-    const productName = staticProduct
-      ? staticProduct.productName
-      : params.slug
-          .split("-")
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ");
+  loader: async ({ params }) => {
+    return await resolveProductBySlug(params.slug);
+  },
+  head: ({ loaderData, params }) => {
+    const product = loaderData ?? getProductBySlug(params.slug);
 
+    if (!product) {
+      return {
+        meta: [
+          { title: "Product Not Found | STKA Pvt Ltd" },
+          {
+            name: "description",
+            content: "The requested pharmaceutical product formulation is not listed in our catalogue.",
+          },
+          { name: "robots", content: "noindex, nofollow" },
+        ],
+      };
+    }
+
+    const productName = product.productName;
     const title = `${productName} | STKA Pvt Ltd`;
-    const description = staticProduct?.description
-      ? staticProduct.description.slice(0, 160)
+    const description = product.description
+      ? product.description.slice(0, 160)
       : `Detailed composition, dosage form, strength, and technical specification record for ${productName} manufactured by STKA Pvt Ltd.`;
 
-    const firstImage = staticProduct?.productImages?.[0]?.imageUrl;
+    const firstImage = product.productImages?.[0]?.imageUrl;
+    const canonicalUrl = `${SITE_URL}/products/${product.slug}`;
 
     return {
       meta: [
@@ -31,7 +45,7 @@ export const Route = createFileRoute("/products/$slug")({
         { name: "description", content: description },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
-        { property: "og:url", content: `https://stkapvt.com/products/${params.slug}` },
+        { property: "og:url", content: canonicalUrl },
         { property: "og:type", content: "product" },
         ...(firstImage ? [{ property: "og:image", content: firstImage }] : []),
         { name: "twitter:card", content: "summary_large_image" },
@@ -39,7 +53,7 @@ export const Route = createFileRoute("/products/$slug")({
         { name: "twitter:description", content: description },
         ...(firstImage ? [{ name: "twitter:image", content: firstImage }] : []),
       ],
-      links: [{ rel: "canonical", href: `https://stkapvt.com/products/${params.slug}` }],
+      links: [{ rel: "canonical", href: canonicalUrl }],
     };
   },
   component: ProductDetailRoute,
@@ -47,38 +61,42 @@ export const Route = createFileRoute("/products/$slug")({
 
 function ProductDetailRoute() {
   const { slug } = Route.useParams();
-
-  // 1. Resolve immediate static fallback product
+  const loaderProduct = Route.useLoaderData();
   const staticProduct = getProductBySlug(slug);
 
-  // 2. Authoritative backend product query
+  // Initial SSR product resolved from loaderData (trying backend first, fallback second)
+  const initialProduct = loaderProduct ?? staticProduct;
+
+  // Authoritative live client query (enables background refetching and client cache invalidation)
   const { data: backendProduct, isSuccess, isLoading, isError, refetch } = useProductBySlug(slug);
   const { data: categoriesData, isSuccess: isCategoriesSuccess } = useCategories({ pageSize: 100 });
 
-  // 3. Before backend success: static fallback is active
-  // After backend success: backend product completely replaces static fallback
-  const product = isSuccess && backendProduct ? backendProduct : staticProduct;
+  // Authoritative resolution priority:
+  // 1. Live backend query response (if successfully fetched by client)
+  // 2. Initial SSR resolved product (from loader)
+  // 3. Immediate static fallback product
+  const product = isSuccess && backendProduct ? backendProduct : initialProduct;
 
-  // Synchronize document <head> metadata when authoritative backend product data loads
+  // Synchronize document <head> metadata when client-side data updates
   useEffect(() => {
-    if (isSuccess && backendProduct) {
-      const title = `${backendProduct.productName} | STKA Pvt Ltd`;
-      const description = backendProduct.description
-        ? backendProduct.description.slice(0, 160)
-        : `Detailed composition, dosage form, strength, and technical specification record for ${backendProduct.productName} manufactured by STKA Pvt Ltd.`;
-      const firstImage = backendProduct.productImages?.[0]?.imageUrl;
+    if (product) {
+      const title = `${product.productName} | STKA Pvt Ltd`;
+      const description = product.description
+        ? product.description.slice(0, 160)
+        : `Detailed composition, dosage form, strength, and technical specification record for ${product.productName} manufactured by STKA Pvt Ltd.`;
+      const firstImage = product.productImages?.[0]?.imageUrl;
 
       updateDocumentMetadata({
         title,
         description,
-        path: `/products/${slug}`,
+        path: `/products/${product.slug}`,
         ogType: "product",
         ogImage: firstImage,
       });
     }
-  }, [isSuccess, backendProduct, slug]);
+  }, [product]);
 
-  // 4. If neither static nor backend product exists and backend has finished loading:
+  // 4. Product not found in either backend or fallback after query attempts
   if (!product && !isLoading) {
     return (
       <SiteLayout>
@@ -112,7 +130,7 @@ function ProductDetailRoute() {
     );
   }
 
-  // 5. If product is a new product not in static fallback and backend is still fetching:
+  // 5. Loading skeleton state (only if product is truly pending and has no SSR/fallback data)
   if (!product && isLoading) {
     return (
       <SiteLayout>
@@ -135,7 +153,7 @@ function ProductDetailRoute() {
     );
   }
 
-  // 6. Valid product found (either static fallback or authoritative backend)
+  // 6. Valid product found (either backend authoritative or static fallback)
   const validImages = product!.productImages?.map((img) => img.imageUrl).filter(Boolean) || [];
   const categoriesList = isCategoriesSuccess && categoriesData?.content?.length ? categoriesData.content : STATIC_CATEGORIES;
   const categoryRecord = categoriesList.find(
@@ -148,15 +166,16 @@ function ProductDetailRoute() {
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
-    name: product.productName,
+    name: product!.productName,
+    url: `${SITE_URL}/products/${product!.slug}`,
     description:
-      product.description ||
-      `Pharmaceutical product formulation ${product.productName} by STKA Pvt Ltd.`,
+      product!.description ||
+      `Pharmaceutical product formulation ${product!.productName} by STKA Pvt Ltd.`,
     brand: {
       "@type": "Brand",
-      name: product.brand || "STKA Pvt Ltd",
+      name: product!.brand || "STKA Pvt Ltd",
     },
-    category: product.categoryName || "Pharmaceuticals",
+    category: product!.categoryName || "Pharmaceuticals",
     ...(validImages.length > 0 ? { image: validImages } : {}),
   };
 
@@ -168,35 +187,35 @@ function ProductDetailRoute() {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: "https://stkapvt.com",
+        item: SITE_URL,
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Products",
-        item: "https://stkapvt.com/products",
+        item: `${SITE_URL}/products`,
       },
       ...(categorySlug
         ? [
             {
               "@type": "ListItem",
               position: 3,
-              name: product.categoryName || "Category",
-              item: `https://stkapvt.com/categories/${categorySlug}`,
+              name: product!.categoryName || "Category",
+              item: `${SITE_URL}/categories/${categorySlug}`,
             },
             {
               "@type": "ListItem",
               position: 4,
-              name: product.productName,
-              item: `https://stkapvt.com/products/${slug}`,
+              name: product!.productName,
+              item: `${SITE_URL}/products/${product!.slug}`,
             },
           ]
         : [
             {
               "@type": "ListItem",
               position: 3,
-              name: product.productName,
-              item: `https://stkapvt.com/products/${slug}`,
+              name: product!.productName,
+              item: `${SITE_URL}/products/${product!.slug}`,
             },
           ]),
     ],
@@ -212,7 +231,7 @@ function ProductDetailRoute() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <ProductDetails product={product} />
+      <ProductDetails product={product!} />
     </SiteLayout>
   );
 }
